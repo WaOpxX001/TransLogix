@@ -846,9 +846,15 @@ class TransportePro {
             case 'vehiculosSection':
                 // Cargar script bajo demanda
                 this.loadScriptOnDemand('vehiculos').then(() => {
-                    if (window.VehiculosManager) {
-                        window.VehiculosManager.loadData();
-                    }
+                    // Esperar un momento para que el script se ejecute completamente
+                    setTimeout(() => {
+                        if (window.VehiculosManager) {
+                            console.log('🚚 Cargando datos de vehículos...');
+                            window.VehiculosManager.loadData();
+                        } else {
+                            console.error('❌ VehiculosManager no está disponible');
+                        }
+                    }, 100);
                 });
                 break;
             case 'transportistasSection':
@@ -862,11 +868,18 @@ class TransportePro {
             case 'reportesSection':
                 // Cargar script bajo demanda
                 this.loadScriptOnDemand('reportes').then(() => {
-                    if (window.ReportesManagerInstance) {
-                        window.ReportesManagerInstance.loadData();
-                    } else if (window.ReportesManager) {
-                        window.ReportesManager.loadData();
-                    }
+                    // Esperar un momento para que el script se ejecute completamente
+                    setTimeout(() => {
+                        if (window.ReportesManagerInstance) {
+                            console.log('📊 Cargando datos de reportes...');
+                            window.ReportesManagerInstance.loadData();
+                        } else if (window.ReportesManager) {
+                            console.log('📊 Cargando datos de reportes (fallback)...');
+                            window.ReportesManager.loadData();
+                        } else {
+                            console.error('❌ ReportesManager no está disponible');
+                        }
+                    }, 100);
                 });
                 break;
             case 'rolesSection':

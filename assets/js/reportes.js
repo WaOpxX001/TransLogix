@@ -3,13 +3,14 @@ class ReportesManager {
     constructor() {
         this.reportData = null;
         this.currentReport = null;
+        this.dataLoaded = false; // Flag para evitar cargas múltiples
         this.init();
     }
 
     init() {
         this.setupEventListeners();
         this.setDefaultDates();
-        this.loadTransportistas();
+        // NO cargar transportistas automáticamente - se cargará cuando se navegue a la sección
     }
 
     setupEventListeners() {
@@ -144,7 +145,13 @@ class ReportesManager {
         if (endDateInput) endDateInput.value = today.toISOString().split('T')[0];
     }
 
-    async loadData() {
+    async loadData(forceReload = false) {
+        // Evitar cargas múltiples innecesarias
+        if (this.dataLoaded && !forceReload) {
+            console.log('📊 Datos de reportes ya inicializados');
+            return;
+        }
+        
         console.log('📊 ReportesManager.loadData() called');
         
         // Cargar transportistas primero
@@ -152,6 +159,8 @@ class ReportesManager {
         
         // Inicializar período por defecto
         this.handlePeriodChange();
+        
+        this.dataLoaded = true;
         
         // Generar reporte inicial con fechas por defecto
         setTimeout(() => {
@@ -1337,4 +1346,12 @@ if (window.app) {
             }
         };
     }
+}
+
+
+// Inicializar instancia global cuando se carga el script
+if (typeof window.ReportesManagerInstance === 'undefined') {
+    console.log('📊 Inicializando ReportesManager...');
+    window.ReportesManagerInstance = new ReportesManager();
+    console.log('✅ ReportesManager inicializado');
 }

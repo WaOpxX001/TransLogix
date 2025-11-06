@@ -4,8 +4,9 @@ class VehiculosManager {
         this.vehicles = [];
         this.stats = {};
         this.currentVehicle = null;
-        this.loadData(); // Initialize data on construction
+        this.dataLoaded = false; // Flag para evitar cargas múltiples
         this.init();
+        // NO cargar datos automáticamente - se cargará cuando se navegue a la sección
     }
 
     init() {
@@ -20,8 +21,18 @@ class VehiculosManager {
         }
     }
 
-    async loadData() {
+    async loadData(forceReload = false) {
+        // Evitar cargas múltiples innecesarias
+        if (this.dataLoaded && !forceReload) {
+            console.log('🚚 Datos de vehículos ya cargados, usando caché');
+            this.updateStatsCards();
+            this.updateVehiclesList();
+            return;
+        }
+        
         try {
+            console.log('🚚 Cargando datos de vehículos desde la API...');
+            
             // Real API calls - connecting to database
             const [vehiclesResponse, statsResponse] = await Promise.all([
                 window.app.apiCall('/LogisticaFinal/api/vehiculos/list.php'),
@@ -30,6 +41,7 @@ class VehiculosManager {
             
             this.vehicles = vehiclesResponse;
             this.stats = statsResponse;
+            this.dataLoaded = true;
             
             // Debug: mostrar los datos recibidos
             console.log('🚚 Datos de vehículos recibidos:', this.vehicles);
@@ -39,6 +51,8 @@ class VehiculosManager {
             
             this.updateStatsCards();
             this.updateVehiclesList();
+            
+            console.log('✅ Datos de vehículos cargados exitosamente');
             
         } catch (error) {
             console.error('❌ Error loading vehicles data:', error);
@@ -849,3 +863,11 @@ VehiculosManager.confirmDeleteVehicle = async function(id) {
 
 // Initialize Vehiculos Manager
 window.VehiculosManager = new VehiculosManager();
+
+
+// Inicializar instancia global cuando se carga el script
+if (typeof window.VehiculosManager === 'undefined') {
+    console.log('🚚 Inicializando VehiculosManager...');
+    window.VehiculosManager = new VehiculosManager();
+    console.log('✅ VehiculosManager inicializado');
+}
