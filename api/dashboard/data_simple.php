@@ -6,8 +6,7 @@ ini_set('display_errors', 1);
 try {
     require_once '../config.php';
     
-    // Get user from session for role-based filtering
-    session_start();
+    // Get user from session (la sesión ya se inicia en config.php)
     if (!isset($_SESSION['user_id'])) {
         http_response_code(401);
         echo json_encode(['error' => 'Not logged in']);
@@ -16,7 +15,7 @@ try {
 
     $user = [
         'id' => $_SESSION['user_id'],
-        'rol' => $_SESSION['rol'] ?? 'transportista'
+        'rol' => $_SESSION['user_role'] ?? $_SESSION['rol'] ?? 'transportista'
     ];
 
     $db = new Database();

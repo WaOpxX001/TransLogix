@@ -3,8 +3,7 @@ header('Content-Type: application/json');
 error_reporting(0); // Suppress PHP errors for clean JSON
 require_once '../../config.php';
 
-// Get user from session
-session_start();
+// Get user from session (la sesión ya se inicia en config.php)
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Not logged in']);

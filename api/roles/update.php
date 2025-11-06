@@ -3,9 +3,7 @@ header('Content-Type: application/json');
 error_reporting(0);
 require_once '../../config.php';
 
-// Temporarily disable auth for testing
-// requireRole(['admin']);
-session_start();
+// La sesión ya se inicia en config.php
 if (!isset($_SESSION['user_id'])) {
     http_response_code(401);
     echo json_encode(['error' => 'Not logged in']);
