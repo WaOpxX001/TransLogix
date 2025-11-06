@@ -1,0 +1,38 @@
+# Railway Ignore File - No subir estos archivos
+
+# Development files
+node_modules/
+.git/
+.vscode/
+.idea/
+
+# Local configuration
+.env.local
+config.local.php
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Documentation (opcional)
+docs/
+Otros/
+
+# Test files (opcional)
+tests/
+*.test.php

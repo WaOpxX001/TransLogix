@@ -1,0 +1,378 @@
+/* 💀 Loading Skeletons - Animaciones de carga modernas */
+/* Optimizado para todas las resoluciones */
+
+/* === ANIMACIÓN BASE === */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* === SKELETON BASE === */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        #f0f0f0 0%,
+        #e0e0e0 20%,
+        #f0f0f0 40%,
+        #f0f0f0 100%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite linear;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+[data-theme="dark"] .skeleton {
+    background: linear-gradient(
+        90deg,
+        #1c2128 0%,
+        #2d333b 20%,
+        #1c2128 40%,
+        #1c2128 100%
+    );
+    background-size: 1000px 100%;
+}
+
+/* === SKELETON VARIANTS === */
+.skeleton-text {
+    height: 16px;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+.skeleton-text-short {
+    width: 60%;
+}
+
+.skeleton-title {
+    height: 24px;
+    margin-bottom: 12px;
+    width: 40%;
+}
+
+.skeleton-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.skeleton-avatar-lg {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+
+.skeleton-button {
+    height: 38px;
+    width: 100px;
+    border-radius: 6px;
+}
+
+.skeleton-card {
+    height: 200px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+.skeleton-table-row {
+    height: 50px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+}
+
+/* === SKELETON PARA TABLAS === */
+.skeleton-table {
+    width: 100%;
+}
+
+.skeleton-table-header {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.skeleton-table-header > div {
+    flex: 1;
+    height: 40px;
+    border-radius: 6px;
+}
+
+.skeleton-table-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* === SKELETON PARA CARDS === */
+.skeleton-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .skeleton-card-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.skeleton-card-item {
+    background: var(--dark-surface);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .skeleton-card-item {
+    background: var(--dark-surface);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* === SKELETON PARA DASHBOARD === */
+.skeleton-stat-card {
+    height: 120px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.skeleton-chart {
+    height: 300px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+/* === LOADING SPINNER MODERNO === */
+.modern-spinner {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(88, 166, 255, 0.2);
+    border-top-color: #58a6ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.modern-spinner-sm {
+    width: 24px;
+    height: 24px;
+    border-width: 3px;
+}
+
+.modern-spinner-lg {
+    width: 80px;
+    height: 80px;
+    border-width: 6px;
+}
+
+/* === LOADING OVERLAY === */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    backdrop-filter: blur(4px);
+}
+
+[data-theme="dark"] .loading-overlay {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.loading-content {
+    text-align: center;
+    color: white;
+}
+
+.loading-content h3 {
+    margin-top: 20px;
+    font-weight: 600;
+}
+
+.loading-content p {
+    margin-top: 8px;
+    opacity: 0.8;
+}
+
+/* === SKELETON PARA VIAJES === */
+.skeleton-viaje-card {
+    background: var(--dark-surface);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .skeleton-viaje-card {
+    background: var(--dark-surface);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.skeleton-viaje-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.skeleton-viaje-badge {
+    width: 100px;
+    height: 28px;
+    border-radius: 14px;
+}
+
+.skeleton-viaje-id {
+    width: 80px;
+    height: 28px;
+    border-radius: 14px;
+}
+
+.skeleton-viaje-route {
+    height: 120px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+.skeleton-viaje-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.skeleton-viaje-info-item {
+    height: 60px;
+    border-radius: 8px;
+}
+
+.skeleton-viaje-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.skeleton-viaje-actions > div {
+    flex: 1;
+    height: 40px;
+    border-radius: 8px;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+    .skeleton-viaje-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .skeleton-card-grid {
+        padding: 10px;
+        gap: 12px;
+    }
+}
+
+/* === SKELETON PARA TRANSPORTISTAS === */
+.skeleton-transportista-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.skeleton-transportista-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.skeleton-transportista-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.skeleton-transportista-name {
+    width: 150px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.skeleton-transportista-email {
+    width: 200px;
+    height: 14px;
+    border-radius: 4px;
+}
+
+.skeleton-transportista-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.skeleton-transportista-actions > div {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+}
+
+/* === FADE IN ANIMATION === */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* === PERFORMANCE OPTIMIZATIONS === */
+.skeleton,
+.modern-spinner {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* Reducir animaciones en dispositivos de bajo rendimiento */
+@media (prefers-reduced-motion: reduce) {
+    .skeleton,
+    .modern-spinner {
+        animation: none;
+    }
+    
+    .skeleton {
+        background: #e0e0e0;
+    }
+    
+    [data-theme="dark"] .skeleton {
+        background: #2d333b;
+    }
+}

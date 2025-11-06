@@ -1,0 +1,306 @@
+/* 📱 Responsive Ultra - Soporte para todas las resoluciones */
+/* Móviles, Tablets, HD, Full HD, 2K, 4K, 8K */
+
+/* === VARIABLES RESPONSIVE === */
+:root {
+    --container-max-width: none;
+    --sidebar-width: 250px;
+    --header-height: 60px;
+    --card-gap: 20px;
+}
+
+/* === BASE RESPONSIVE === */
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* No modificar el diseño base en desktop */
+
+/* === MÓVILES (320px - 480px) === */
+@media (max-width: 480px) {
+    html {
+        font-size: 14px;
+    }
+    
+    :root {
+        --sidebar-width: 100%;
+        --card-gap: 12px;
+    }
+    
+    .main-content {
+        padding: 12px;
+    }
+    
+    .sidebar {
+        width: 100% !important;
+        position: fixed !important;
+        left: -100%;
+        transition: left 0.3s ease;
+        z-index: 9999;
+    }
+    
+    .sidebar.show {
+        left: 0;
+    }
+    
+    .table-responsive {
+        font-size: 0.85rem;
+    }
+    
+    .btn {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .card {
+        margin-bottom: 12px;
+    }
+    
+    .modal-dialog {
+        margin: 10px;
+    }
+    
+    /* Ocultar columnas menos importantes en móvil */
+    .table .d-none-mobile {
+        display: none !important;
+    }
+    
+    /* Stack de botones en móvil */
+    .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        width: 100%;
+        border-radius: 6px !important;
+        margin-bottom: 4px;
+    }
+}
+
+/* === MÓVILES GRANDES (481px - 767px) === */
+@media (min-width: 481px) and (max-width: 767px) {
+    html {
+        font-size: 15px;
+    }
+    
+    :root {
+        --sidebar-width: 100%;
+        --card-gap: 16px;
+    }
+    
+    .main-content {
+        padding: 16px;
+    }
+    
+    .sidebar {
+        width: 100% !important;
+        position: fixed !important;
+        left: -100%;
+        transition: left 0.3s ease;
+        z-index: 9999;
+    }
+    
+    .sidebar.show {
+        left: 0;
+    }
+}
+
+/* === TABLETS (768px - 1024px) === */
+@media (min-width: 768px) and (max-width: 1024px) {
+    html {
+        font-size: 15px;
+    }
+    
+    :root {
+        --sidebar-width: 220px;
+        --card-gap: 18px;
+    }
+    
+    .main-content {
+        padding: 18px;
+    }
+    
+    .sidebar {
+        width: var(--sidebar-width);
+    }
+    
+    /* Grid de 2 columnas en tablets */
+    .row-cols-md-2 > * {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+/* === LAPTOPS / HD (1025px - 1366px) === */
+@media (min-width: 1025px) and (max-width: 1366px) {
+    /* Mantener diseño original */
+}
+
+/* === FULL HD (1367px - 1920px) === */
+@media (min-width: 1367px) and (max-width: 1920px) {
+    /* Mantener diseño original */
+}
+
+/* === 2K / QHD (1921px - 2560px) === */
+@media (min-width: 1921px) and (max-width: 2560px) {
+    /* Escalar ligeramente para pantallas grandes */
+    html {
+        font-size: 17px;
+    }
+}
+
+/* === 4K / UHD (2561px - 3840px) === */
+@media (min-width: 2561px) and (max-width: 3840px) {
+    /* Escalar para 4K */
+    html {
+        font-size: 18px;
+    }
+}
+
+/* === 8K (3841px+) === */
+@media (min-width: 3841px) {
+    /* Escalar para 8K */
+    html {
+        font-size: 20px;
+    }
+}
+
+/* === ORIENTACIÓN === */
+@media (orientation: landscape) {
+    .landscape-only {
+        display: block !important;
+    }
+    
+    .portrait-only {
+        display: none !important;
+    }
+}
+
+@media (orientation: portrait) {
+    .landscape-only {
+        display: none !important;
+    }
+    
+    .portrait-only {
+        display: block !important;
+    }
+}
+
+/* === TOUCH DEVICES === */
+@media (hover: none) and (pointer: coarse) {
+    /* Aumentar área de toque */
+    .btn,
+    .nav-link,
+    a {
+        min-height: 44px;
+        min-width: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Eliminar hover en dispositivos táctiles */
+    .btn:hover,
+    .nav-link:hover,
+    .table tbody tr:hover {
+        transform: none;
+    }
+}
+
+/* === PRINT === */
+@media print {
+    .sidebar,
+    .header,
+    .btn,
+    .no-print {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin: 0;
+        padding: 0;
+        max-width: 100%;
+    }
+    
+    .card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
+
+/* === ACCESIBILIDAD === */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+@media (prefers-contrast: high) {
+    :root {
+        --dark-text-primary: #ffffff;
+        --dark-bg-primary: #000000;
+    }
+}
+
+/* === UTILIDADES RESPONSIVE === */
+.grid-responsive {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+@media (max-width: 768px) {
+    .grid-responsive {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* === SCROLL SUAVE === */
+html {
+    scroll-behavior: smooth;
+}
+
+/* === OPTIMIZACIÓN DE IMÁGENES === */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* === TABLAS RESPONSIVE === */
+@media (max-width: 768px) {
+    .table-responsive-mobile {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table-responsive-mobile table {
+        min-width: 600px;
+    }
+}
+
+/* === CARDS RESPONSIVE === */
+.card-responsive {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+    .card-responsive {
+        width: calc(50% - 10px);
+    }
+}
+
+@media (min-width: 1200px) {
+    .card-responsive {
+        width: calc(33.333% - 14px);
+    }
+}

@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransLogix - Sistema de Gestión Logística</title>
+    
+    <!-- Performance Optimizations -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
+    <!-- Bootstrap CSS - Preload for faster loading -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <!-- Font Awesome - Preload for faster loading -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"></noscript>
+    <!-- Custom CSS - Optimized loading -->
+    <link rel="stylesheet" href="assets/css/styles.css?v=2.0.0">
+    <link rel="stylesheet" href="assets/css/sections.css?v=2.0.0">
+    <link rel="stylesheet" href="assets/css/dark-theme.css?v=2.0.0">
+    <link rel="stylesheet" href="assets/css/loading-skeletons.css?v=2.0.0">
+    <link rel="stylesheet" href="assets/css/responsive-ultra.css?v=2.0.0">
+
+    <!-- Modal Z-Index Fix -->
+    <style>
+        /* Asegurar que los modales estén siempre encima */
+        .modal {
+            z-index: 99999 !important;
+        }
+
+        .modal-backdrop {
+            z-index: 99998 !important;
+        }
+
+        .modal-dialog {
+            z-index: 100000 !important;
+        }
+
+        /* Específico para el modal de viajes */
+        #nuevoViajeModal {
+            z-index: 99999 !important;
+        }
+        
+        /* Restricciones de roles para transportistas */
+        .transportista-hidden {
+            display: none !important;
+            visibility: hidden !important;
+        }
+        
+        body[data-role="transportista"] #btnNuevoViaje,
+        body[data-role="transportista"] .admin-supervisor-only,
+        body[data-role="transportista"] #filterTransportista,
+        body[data-role="transportista"] .btn-outline-warning,
+        body[data-role="transportista"] .btn-outline-danger,
+        body[data-role="transportista"] .fa-edit,
+        body[data-role="transportista"] .fa-trash {
+            display: none !important;
+        }
+        
+        /* Ocultar toda la columna del filtro de transportista */
+        body[data-role="transportista"] #filterTransportista {
+            display: none !important;
+        }
+        
+        body[data-role="transportista"] #filterTransportista + label,
+        body[data-role="transportista"] label[for="filterTransportista"] {
+            display: none !important;
+        }
+        
+        /* Ocultar la columna completa que contiene el filtro de transportista */
+        body[data-role="transportista"] .col-md-3:has(#filterTransportista) {
+            display: none !important;
+        }
+        
+        /* Fallback para navegadores que no soportan :has() */
+        body[data-role="transportista"] .transportista-filter-column {
+            display: none !important;
+        }
+        
+        /* Ocultar botones de acción en las tarjetas de viajes para transportistas */
+        body[data-role="transportista"] .trip-card .btn-outline-primary,
+        body[data-role="transportista"] .trip-card .btn-outline-warning,
+        body[data-role="transportista"] .trip-card .btn-outline-danger,
+        body[data-role="transportista"] .viaje-card .btn-outline-primary,
+        body[data-role="transportista"] .viaje-card .btn-outline-warning,
+        body[data-role="transportista"] .viaje-card .btn-outline-danger,
+        body[data-role="transportista"] .card .fa-eye,
+        body[data-role="transportista"] .card .fa-edit,
+        body[data-role="transportista"] .card .fa-trash {
+            display: none !important;
+        }
+        
+        /* Ocultar botones con iconos específicos */
+        body[data-role="transportista"] button[title*="editar"],
+        body[data-role="transportista"] button[title*="Editar"],
+        body[data-role="transportista"] button[title*="eliminar"],
+        body[data-role="transportista"] button[title*="Eliminar"] {
+            display: none !important;
+        }
+        
+        /* Estilos para el botón de mostrar/ocultar contraseña */
+        #togglePassword {
+            border-left: none;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            transition: all 0.2s ease;
+        }
+        
+        #togglePassword:hover {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        
+        #togglePassword:focus {
+            box-shadow: none;
+            border-color: #80bdff;
+        }
+        
+        .input-group .form-control:focus {
+            border-right: 1px solid #80bdff;
+        }
+
+        #nuevoViajeModal .modal-backdrop {
+            z-index: 99998 !important;
+        }
+
+        #nuevoViajeModal .modal-dialog {
+            z-index: 100000 !important;
+        }
+
+        #nuevoViajeModal .modal-content {
+            z-index: 100001 !important;
+        }
+
+        /* Asegurar que el backdrop esté detrás del modal */
+        .modal-backdrop.show {
+            z-index: 99998 !important;
+        }
+
+        /* Centrar mejor el modal */
+        .modal-dialog-centered {
+            display: flex !important;
+            align-items: center !important;
+            min-height: calc(100% - 1rem) !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Loading Screen - Pantalla de Carga -->
+    <div id="loadingScreen" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 999999;
+        transition: opacity 0.5s ease-out;
+    ">
+        <div style="text-align: center; color: white;">
+            <!-- Logo animado -->
+            <div style="
+                width: 120px;
+                height: 120px;
+                margin: 0 auto 30px;
+                background: rgba(255,255,255,0.1);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                animation: pulse 2s ease-in-out infinite;
+            ">
+                <i class="fas fa-truck" style="font-size: 60px; color: white;"></i>
+            </div>
+            
+            <!-- Título -->
+            <h1 style="
+                font-size: 2.5rem;
+                font-weight: 700;
+                margin-bottom: 15px;
+                text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            ">TransLogix</h1>
+            
+            <!-- Subtítulo -->
+            <p style="
+                font-size: 1.1rem;
+                margin-bottom: 40px;
+                opacity: 0.9;
+            ">Sistema de Gestión Logística</p>
+            
+            <!-- Spinner de carga -->
+            <div style="
+                width: 60px;
+                height: 60px;
+                margin: 0 auto 20px;
+                border: 4px solid rgba(255,255,255,0.3);
+                border-top: 4px solid white;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            "></div>
+            
+            <!-- Mensaje de carga -->
+            <p id="loadingMessage" style="
+                font-size: 1rem;
+                opacity: 0.8;
+                margin-top: 20px;
+            ">Cargando datos del sistema...</p>
+            
+            <!-- Barra de progreso -->
+            <div style="
+                width: 300px;
+                height: 4px;
+                background: rgba(255,255,255,0.2);
+                border-radius: 2px;
+                margin: 20px auto 0;
+                overflow: hidden;
+            ">
+                <div id="loadingProgress" style="
+                    width: 0%;
+                    height: 100%;
+                    background: white;
+                    border-radius: 2px;
+                    transition: width 0.3s ease;
+                "></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Animaciones CSS -->
+    <style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        #loadingScreen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+
+    <!-- Animated Background - Mejorado -->
+    <div class="bg-animation">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    
+    <!-- Estilos de Animación de Fondo -->
+    <style>
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .bg-animation span {
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            animation: move 25s linear infinite;
+            bottom: -150px;
+        }
+
+        .bg-animation span:nth-child(1) {
+            left: 25%;
+            width: 80px;
+            height: 80px;
+            animation-delay: 0s;
+        }
+
+        .bg-animation span:nth-child(2) {
+            left: 10%;
+            width: 20px;
+            height: 20px;
+            animation-delay: 2s;
+            animation-duration: 12s;
+        }
+
+        .bg-animation span:nth-child(3) {
+            left: 70%;
+            width: 60px;
+            height: 60px;
+            animation-delay: 4s;
+        }
+
+        .bg-animation span:nth-child(4) {
+            left: 40%;
+            width: 60px;
+            height: 60px;
+            animation-delay: 0s;
+            animation-duration: 18s;
+        }
+
+        .bg-animation span:nth-child(5) {
+            left: 65%;
+            width: 20px;
+            height: 20px;
+            animation-delay: 0s;
+        }
+
+        .bg-animation span:nth-child(6) {
+            left: 75%;
+            width: 110px;
+            height: 110px;
+            animation-delay: 3s;
+        }
+
+        .bg-animation span:nth-child(7) {
+            left: 35%;
+            width: 150px;
+            height: 150px;
+            animation-delay: 7s;
+        }
+
+        .bg-animation span:nth-child(8) {
+            left: 50%;
+            width: 25px;
+            height: 25px;
+            animation-delay: 15s;
+            animation-duration: 45s;
+        }
+
+        .bg-animation span:nth-child(9) {
+            left: 20%;
+            width: 15px;
+            height: 15px;
+            animation-delay: 2s;
+            animation-duration: 35s;
+        }
+
+        .bg-animation span:nth-child(10) {
+            left: 85%;
+            width: 150px;
+            height: 150px;
+            animation-delay: 0s;
+            animation-duration: 11s;
+        }
+
+        @keyframes move {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+                border-radius: 0;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+                border-radius: 50%;
+            }
+        }
+        
+        /* Asegurar que el contenido esté por encima de la animación */
+        #loginScreen,
+        #dashboard,
+        #loadingScreen {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container d-flex align-items-center justify-content-center">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>🚛 TransLogix</h1>
+                <p>Sistema de Gestión Logística Inteligente</p>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Correo Electrónico</label>
+                    <input type="email" id="email" class="form-control" placeholder="tu@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <div class="input-group">
+                        <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword" onclick="window.app.toggleLoginPassword()">
+                            <i class="fas fa-eye" id="togglePasswordIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    Iniciar Sesión
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard d-none">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div
+                class="sidebar-header d-flex justify-content-between align-items-center py-3 border-bottom border-light border-opacity-25 mb-3">
+                <h2 class="h4 text-white mb-0">🚚 TransLogix</h2>
+                <button id="sidebarThemeToggle" class="btn btn-link text-white p-1" title="Cambiar tema">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+
+            <div class="user-info d-flex align-items-center p-3 mb-3">
+                <div class="user-avatar me-3" id="userAvatar">--</div>
+                <div class="flex-grow-1">
+                    <div class="user-name text-white fw-semibold" id="userName">Usuario</div>
+                    <div class="user-role text-light opacity-75" id="userRole">Cargando...</div>
+                </div>
+            </div>
+
+            <nav>
+                <ul class="nav flex-column" id="navMenu">
+                    <!-- Dynamic menu items will be inserted here -->
+                </ul>
+            </nav>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer mt-auto p-3 border-top border-light border-opacity-25">
+                <button class="btn btn-danger w-100" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>Cerrar Sesión
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Mobile Section Selector - Solo visible en móviles -->
+            <div class="mobile-section-selector d-md-none mb-3">
+                <div class="mobile-nav-buttons">
+                    <button class="mobile-nav-btn active" data-section="dashboardSection" onclick="handleMobileSectionChange('dashboardSection')">
+                        <i class="fas fa-home"></i>
+                        <span>Dashboard</span>
+                    </button>
+                    <button class="mobile-nav-btn" data-section="viajesSection" onclick="handleMobileSectionChange('viajesSection')">
+                        <i class="fas fa-truck"></i>
+                        <span>Viajes</span>
+                    </button>
+                    <button class="mobile-nav-btn" data-section="gastosSection" onclick="handleMobileSectionChange('gastosSection')">
+                        <i class="fas fa-receipt"></i>
+                        <span>Gastos</span>
+                    </button>
+                    <button class="mobile-nav-btn" data-section="vehiculosSection" data-role="admin,supervisor" onclick="handleMobileSectionChange('vehiculosSection')">
+                        <i class="fas fa-car"></i>
+                        <span>Vehículos</span>
+                    </button>
+                    <button class="mobile-nav-btn" data-section="transportistasSection" data-role="admin,supervisor" onclick="handleMobileSectionChange('transportistasSection')">
+                        <i class="fas fa-users"></i>
+                        <span>Usuarios</span>
+                    </button>
+                    <button class="mobile-nav-btn" data-section="reportesSection" data-role="admin,supervisor" onclick="handleMobileSectionChange('reportesSection')">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Reportes</span>
+                    </button>
+                    <button class="mobile-nav-btn" data-section="rolesSection" data-role="admin" onclick="handleMobileSectionChange('rolesSection')">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Roles</span>
+                    </button>
+                    
+                    <!-- Separador visual -->
+                    <div class="mobile-nav-separator"></div>
+                    
+                    <!-- Botón de Modo Oscuro -->
+                    <button class="mobile-nav-btn mobile-action-btn" id="mobileThemeToggle" onclick="toggleMobileTheme()">
+                        <i class="fas fa-moon"></i>
+                        <span>Tema</span>
+                    </button>
+                    
+                    <!-- Botón de Cerrar Sesión -->
+                    <button class="mobile-nav-btn mobile-action-btn mobile-logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Salir</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Top Bar -->
+            <div class="card mb-4">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <h1 class="h3 mb-0" id="pageTitle">Dashboard</h1>
+                    <div class="d-flex gap-2">
+                        <!-- Botones de actualización removidos para evitar mostrar datos del admin -->
+                        <button class="btn btn-outline-primary btn-sm" onclick="window.print()">
+                            <i class="fas fa-print"></i> Imprimir
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Section -->
+            <div id="dashboardSection" class="section active">
+                <!-- Stats Cards -->
+
+                <div class="row mb-4">
+                    <div class="col-md-2">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon primary mb-2">💰</div>
+                            <div class="stat-value h4 mb-1" data-stat="gastos-totales">$0</div>
+                            <div class="stat-label text-muted small">Gastos Totales</div>
+                            <div class="stat-change positive mt-2">
+                                <i class="fas fa-arrow-up"></i> Cargando...
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon success mb-2">⛽</div>
+                            <div class="stat-value h4 mb-1">0 L</div>
+                            <div class="stat-label text-muted small">Combustible</div>
+                            <div class="stat-change negative mt-2">
+                                <i class="fas fa-arrow-down"></i> Cargando...
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon success mb-2">✅</div>
+                            <div class="stat-value h4 mb-1" data-stat="gastos-aprobados">0</div>
+                            <div class="stat-label text-muted small">Gastos Aprobados</div>
+                            <div class="stat-change positive mt-2">
+                                <i class="fas fa-check-circle"></i> Cargando...
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon danger mb-2">❌</div>
+                            <div class="stat-value h4 mb-1" data-stat="gastos-negados">0</div>
+                            <div class="stat-label text-muted small">Gastos Negados</div>
+                            <div class="stat-change negative mt-2">
+                                <i class="fas fa-times-circle"></i> Cargando...
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Rutas Activas - Solo visible para Admin y Supervisor -->
+                    <div class="col-md-2" id="pendientes-card" style="display: none;">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon warning mb-2">⏳</div>
+                            <div class="stat-value h4 mb-1" data-stat="viajes-pendientes">0</div>
+                            <div class="stat-label text-muted small">Pendientes</div>
+                            <div class="stat-change neutral mt-2">
+                                <i class="fas fa-clock"></i> En espera
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2" id="en-ruta-card" style="display: none;">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon primary mb-2">🚛</div>
+                            <div class="stat-value h4 mb-1" data-stat="viajes-en-progreso">0</div>
+                            <div class="stat-label text-muted small">En Ruta</div>
+                            <div class="stat-change positive mt-2">
+                                <i class="fas fa-route"></i> Activas
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2" id="completados-card" style="display: none;">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon success mb-2">✅</div>
+                            <div class="stat-value h4 mb-1" data-stat="viajes-completados">0</div>
+                            <div class="stat-label text-muted small">Completados</div>
+                            <div class="stat-change positive mt-2">
+                                <i class="fas fa-check"></i> Finalizados
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2" id="cancelados-card" style="display: none;">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon danger mb-2">❌</div>
+                            <div class="stat-value h4 mb-1" data-stat="viajes-cancelados">0</div>
+                            <div class="stat-label text-muted small">Cancelados</div>
+                            <div class="stat-change negative mt-2">
+                                <i class="fas fa-times"></i> Cancelados
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Segunda fila de estadísticas - Gastos Detallados -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon success mb-2">💰</div>
+                            <div class="stat-value h4 mb-1" data-stat="monto-gastos-aprobados">$0</div>
+                            <div class="stat-label text-muted small">Monto Gastos Aprobados</div>
+                            <div class="stat-change positive mt-2">
+                                <i class="fas fa-dollar-sign"></i> Total aprobado
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon danger mb-2">💸</div>
+                            <div class="stat-value h4 mb-1" data-stat="monto-gastos-rechazados">$0</div>
+                            <div class="stat-label text-muted small">Monto Gastos Rechazados</div>
+                            <div class="stat-change negative mt-2">
+                                <i class="fas fa-ban"></i> Total rechazado
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon warning mb-2">⏳</div>
+                            <div class="stat-value h4 mb-1" data-stat="cantidad-gastos-pendientes">0</div>
+                            <div class="stat-label text-muted small">Gastos Pendientes</div>
+                            <div class="stat-change neutral mt-2">
+                                <i class="fas fa-clock"></i> En revisión
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon info mb-2">📊</div>
+                            <div class="stat-value h4 mb-1" data-stat="promedio-gastos">$0</div>
+                            <div class="stat-label text-muted small">Promedio por Gasto</div>
+                            <div class="stat-change neutral mt-2">
+                                <i class="fas fa-calculator"></i> Promedio
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nueva gráfica de gastos por mes -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Gastos por Mes</h5>
+                            </div>
+                            <div class="card-body" style="height: 400px;">
+                                <canvas id="monthlyExpensesChart" class="w-100 h-100"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Gastos por Categoría</h5>
+                            </div>
+                            <div class="card-body" style="height: 300px;">
+                                <canvas id="expenseChart" class="w-100 h-100"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Estado de Rutas Activas</h5>
+                            </div>
+                            <div class="card-body" style="height: 300px;">
+                                <canvas id="routesChart" class="w-100 h-100"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity Table -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">📋 Actividad Reciente</h5>
+                        <button class="btn btn-outline-primary btn-sm"
+                            onclick="window.DashboardManager.viewAllExpenses()">
+                            <i class="fas fa-list me-1"></i>Ver Todos
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Transportista</th>
+                                        <th>Tipo</th>
+                                        <th>Monto</th>
+                                        <th>Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="activityTable">
+                                    <tr>
+                                        <td colspan="5" class="text-center py-4">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Cargando...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mobile Card View for Activity -->
+                        <div class="mobile-card-view" id="mobileActivityView" style="display: none;">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando actividad...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mis Viajes de Hoy Section -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">🚛 Mis Viajes de Hoy</h5>
+                        <button class="btn btn-outline-primary btn-sm" onclick="showSection('viajesSection')">
+                            Ver Todos
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div id="todayTripsContainer">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando viajes...</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Mobile Card View for Today Trips -->
+                        <div class="mobile-card-view" id="mobileTodayTripsView" style="display: none;">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando viajes...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Viajes Section -->
+            <div id="viajesSection" class="section">
+                <!-- Filtros y Acciones -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">📋 Gestión de Viajes</h5>
+                        <button id="btnNuevoViaje" class="btn btn-primary"
+                            onclick="window.ViajesManager && window.ViajesManager.showCreateModal ? window.ViajesManager.showCreateModal() : alert('Sistema no inicializado')">
+                            <i class="fas fa-plus me-2"></i>Nuevo Viaje
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-3">
+                                <label class="form-label small text-muted">Estado del Viaje</label>
+                                <select class="form-select" id="filterStatus"
+                                    onchange="window.ViajesManager.filterTrips()">
+                                    <option value="">Todos los estados</option>
+                                    <option value="pendiente">🕐 Pendientes</option>
+                                    <option value="en_ruta">🚛 En Ruta</option>
+                                    <option value="completado">✅ Completados</option>
+                                    <option value="cancelado">❌ Cancelados</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small text-muted">Fecha Programada</label>
+                                <input type="date" class="form-control" id="filterDate"
+                                    onchange="window.ViajesManager.filterTrips()">
+                            </div>
+                            <div class="col-md-3 transportista-filter-column">
+                                <label class="form-label small text-muted">Transportista</label>
+                                <select class="form-select" id="filterTransportista"
+                                    onchange="window.ViajesManager.filterTrips()">
+                                    <option value="">Todos los transportistas</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small text-muted">&nbsp;</label>
+                                <button class="btn btn-outline-secondary w-100 d-block"
+                                    onclick="window.ViajesManager.clearFilters()">
+                                    <i class="fas fa-times me-2"></i>Limpiar Filtros
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Viajes -->
+                <div id="viajesContainer">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando viajes...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gastos Section -->
+            <div id="gastosSection" class="section">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">📝 Registrar Nuevo Gasto</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="expenseForm">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Tipo de Gasto *</label>
+                                    <select class="form-select" name="tipo" required>
+                                        <option value="">Seleccionar...</option>
+                                        <option value="combustible">⛽ Combustible</option>
+                                        <option value="mantenimiento">🔧 Mantenimiento</option>
+                                        <option value="peaje">🛣️ Peajes</option>
+                                        <option value="multa">🚨 Multas</option>
+                                        <option value="hospedaje">🏨 Hospedaje</option>
+                                        <option value="comida">🍴 Alimentación</option>
+                                        <option value="otros">📦 Otros</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Fecha *</label>
+                                    <input type="date" class="form-control" name="fecha" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Monto ($) *</label>
+                                    <input type="number" class="form-control" name="monto" placeholder="0.00"
+                                        step="0.01" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Vehículo *</label>
+                                    <select class="form-select" name="vehiculo_id" required>
+                                        <option value="">Seleccionar vehículo...</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Viaje Asociado</label>
+                                    <select class="form-select" name="viaje_id" disabled>
+                                        <option value="">Primero seleccione un vehículo</option>
+                                    </select>
+                                    <small class="form-text text-muted">Opcional: Vincular gasto a un viaje específico</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Kilometraje Actual *</label>
+                                    <input type="number" class="form-control" name="kilometraje" placeholder="0"
+                                        required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Litros (si es combustible)</label>
+                                    <input type="number" class="form-control" name="litros" placeholder="0.00"
+                                        step="0.01">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Número de Ticket / Factura *</label>
+                                    <input type="text" class="form-control" name="numero_factura" placeholder="FAC-0000"
+                                        required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">📷 Adjuntar Foto del Recibo</label>
+                                    <input type="file" name="recibo_imagen" class="form-control"
+                                        accept="image/jpeg,image/png,image/gif,image/webp" id="receiptFile">
+                                    <small class="form-text text-muted">Formatos: JPG, PNG, GIF, WebP. Máximo
+                                        5MB.</small>
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label">Descripción / Notas</label>
+                                    <textarea class="form-control" name="descripcion" rows="3"
+                                        placeholder="Agregar detalles adicionales..."></textarea>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2 mt-3">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Guardar Gasto
+                                </button>
+                                <button type="reset" class="btn btn-outline-secondary">
+                                    <i class="fas fa-redo"></i> Limpiar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Mis Gastos -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">💰 Mis Gastos Recientes</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="myExpensesTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Tipo</th>
+                                        <th>Vehículo</th>
+                                        <th>Monto</th>
+                                        <th>Factura</th>
+                                        <th>Estado</th>
+                                        <th class="admin-supervisor-only">Aprobar/Denegar</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="8" class="text-center py-4">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Cargando...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mobile Card View -->
+                        <div class="mobile-card-view" id="mobileExpensesView" style="display: none;">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Todos los Gastos (Solo Admin/Supervisor) -->
+                <div class="card admin-supervisor-only">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">📊 Todos los Gastos del Sistema</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="allExpensesTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Usuario</th>
+                                        <th>Tipo</th>
+                                        <th>Vehículo</th>
+                                        <th>Monto</th>
+                                        <th>Factura</th>
+                                        <th>Estado</th>
+                                        <th>Aprobar/Denegar</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="8" class="text-center py-4">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Cargando...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mobile Card View for All Expenses -->
+                        <div class="mobile-card-view" id="mobileAllExpensesView" style="display: none;">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando todos los gastos...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transportistas Section -->
+            <div id="transportistasSection" class="section">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">👥 Gestión de Transportistas</h5>
+                        <button class="btn btn-primary btn-sm" onclick="TransportistasManager.prototype.openAddModal()">
+                            <i class="fas fa-plus"></i> Nuevo Transportista
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Teléfono</th>
+                                        <th>Licencia</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Cargando...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mobile Card View for Transportistas -->
+                        <div class="mobile-card-view" id="mobileTransportistasView" style="display: none;">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando transportistas...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vehículos Section -->
+            <div id="vehiculosSection" class="section">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon primary mb-2">🚚</div>
+                            <div class="stat-value h4 mb-1">0</div>
+                            <div class="stat-label text-muted small">Vehículos Totales</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon success mb-2">✅</div>
+                            <div class="stat-value h4 mb-1">0</div>
+                            <div class="stat-label text-muted small">En Operación</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon warning mb-2">🔧</div>
+                            <div class="stat-value h4 mb-1">0</div>
+                            <div class="stat-label text-muted small">En Mantenimiento</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card card h-100 p-3">
+                            <div class="stat-icon danger mb-2">⚠️</div>
+                            <div class="stat-value h4 mb-1">0</div>
+                            <div class="stat-label text-muted small">Fuera de Servicio</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Flota de Vehículos</h5>
+                        <button class="btn btn-primary btn-sm admin-supervisor-only"
+                            onclick="window.VehiculosManager.openAddModal()">
+                            <i class="fas fa-plus"></i> Nuevo Vehículo
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Placa</th>
+                                        <th>Tipo</th>
+                                        <th>Marca/Modelo</th>
+                                        <th>Año</th>
+                                        <th>Kilometraje</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Cargando...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mobile Card View for Vehicles -->
+                        <div class="mobile-card-view" id="mobileVehiclesView" style="display: none;">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando vehículos...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reportes Section -->
+            <div id="reportesSection" class="section">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">📊 Generador de Reportes</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Tipo de Reporte</label>
+                                <select class="form-select" id="reportType" onchange="updateReportSubFilter()">
+                                    <option value="gastos">📊 Gastos Generales</option>
+                                    <option value="viajes">🚛 Reporte de Viajes</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label" id="subFilterLabel">Tipo de Gasto</label>
+                                <select class="form-select" id="reportSubFilter" onchange="applyReportFilters()">
+                                    <!-- Opciones dinámicas según el tipo de reporte -->
+                                    <option value="all">Todos los tipos</option>
+                                    <option value="combustible">⛽ Combustible</option>
+                                    <option value="mantenimiento">🔧 Mantenimiento</option>
+                                    <option value="peajes">🛣️ Peajes</option>
+                                    <option value="multas">🚨 Multas</option>
+                                    <option value="hospedaje">🏨 Hospedaje</option>
+                                    <option value="alimentacion">🍽️ Alimentación</option>
+                                    <option value="otros">📦 Otros</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Período</label>
+                                <select class="form-select" id="reportPeriod" onchange="applyReportFilters()">
+                                    <option value="custom">📅 Personalizado</option>
+                                    <option value="weekly">📆 Semanal</option>
+                                    <option value="monthly">📊 Mensual</option>
+                                    <option value="annual">📈 Anual</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Transportista</label>
+                                <select class="form-select" id="reportTransportista" onchange="applyReportFilters()">
+                                    <option value="all">👥 Todos los Transportistas</option>
+                                    <!-- Se llenará dinámicamente -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-3 mt-2" id="customDateRange">
+                            <div class="col-md-3">
+                                <label class="form-label">Fecha Inicio</label>
+                                <input type="date" class="form-control" id="startDate">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Fecha Fin</label>
+                                <input type="date" class="form-control" id="endDate">
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle"></i>
+                                El reporte se genera automáticamente. Selecciona el período y transportista para filtrar los datos.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Area -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Vista Previa del Reporte</h5>
+                    </div>
+                    <div class="card-body" style="min-height: 300px;">
+                        <div id="reportPreview" class="chart-placeholder d-flex align-items-center justify-content-center h-100">
+                            <p class="text-muted">Selecciona los parámetros y genera el reporte para ver la vista previa
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Roles Section -->
+            <div id="rolesSection" class="section">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">🔐 Gestión de Roles y Permisos</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title">👔 Administrador</h6>
+                                        <p class="card-text small text-muted">Acceso completo al sistema</p>
+                                        <span class="badge bg-success">Todos los permisos</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title">📊 Supervisor</h6>
+                                        <p class="card-text small text-muted">Supervisión y reportes</p>
+                                        <span class="badge bg-warning">Ver reportes</span>
+                                        <span class="badge bg-warning">Aprobar gastos</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body text-center">
+                                        <h6 class="card-title">🚛 Transportista</h6>
+                                        <p class="card-text small text-muted">Registro de gastos</p>
+                                        <span class="badge bg-primary">Registrar gastos</span>
+                                        <span class="badge bg-primary">Ver propios</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Usuarios por Rol</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Usuario</th>
+                                        <th>Email</th>
+                                        <th>Teléfono</th>
+                                        <th>Rol Actual</th>
+                                        <th>Último Acceso</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <div class="spinner-border text-primary" role="status">
+                                                <span class="visually-hidden">Cargando...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mobile Card View for Users -->
+                        <div class="mobile-card-view" id="mobileRolesView" style="display: none;">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando usuarios...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- Nuevo Viaje Modal -->
+    <div class="modal fade" id="nuevoViajeModal" tabindex="-1" aria-labelledby="nuevoViajeModalLabel" aria-hidden="true"
+        style="z-index: 99999 !important;">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content"
+                style="position: relative; z-index: 100000 !important; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="nuevoViajeModalLabel">Nuevo Viaje</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Complete el formulario para registrar un nuevo viaje.
+                    </div>
+
+                    <form id="nuevoViajeForm">
+                        <!-- Origen -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6 class="text-primary mb-2"><i class="fas fa-map-marker-alt me-1"></i> Origen</h6>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="origenEstado" class="form-label">Estado</label>
+                                <select class="form-select" id="origenEstado" name="origenEstado" required>
+                                    <option value="">Seleccionar estado...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="origenMunicipio" class="form-label">Municipio</label>
+                                <input type="text" class="form-control" id="origenMunicipio" name="origenMunicipio"
+                                    placeholder="Ej: Guadalajara" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="origenLugar" class="form-label">Lugar Específico</label>
+                                <input type="text" class="form-control" id="origenLugar" name="origenLugar"
+                                    placeholder="Ej: Centro de Distribución">
+                            </div>
+                        </div>
+
+                        <!-- Destino -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <h6 class="text-success mb-2"><i class="fas fa-flag-checkered me-1"></i> Destino</h6>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="destinoEstado" class="form-label">Estado</label>
+                                <select class="form-select" id="destinoEstado" name="destinoEstado" required>
+                                    <option value="">Seleccionar estado...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="destinoMunicipio" class="form-label">Municipio</label>
+                                <input type="text" class="form-control" id="destinoMunicipio" name="destinoMunicipio"
+                                    placeholder="Ej: Monterrey" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="destinoLugar" class="form-label">Lugar Específico</label>
+                                <input type="text" class="form-control" id="destinoLugar" name="destinoLugar"
+                                    placeholder="Ej: Bodega Principal">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="fechaSalida" class="form-label">Fecha de Salida</label>
+                                <input type="datetime-local" class="form-control" id="fechaSalida" name="fechaSalida"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="fechaLlegada" class="form-label">Fecha Estimada de Llegada</label>
+                                <input type="datetime-local" class="form-control" id="fechaLlegada" name="fechaLlegada"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="transportista" class="form-label">Transportista</label>
+                                <select class="form-select" id="transportista" name="transportista" required>
+                                    <option value="" selected disabled>Seleccione un transportista</option>
+                                    <!-- Los transportistas se cargarán dinámicamente -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="vehiculo" class="form-label">Vehículo</label>
+                                <select class="form-select" id="vehiculo" name="vehiculo" required>
+                                    <option value="" selected disabled>Seleccione un vehículo</option>
+                                    <!-- Los vehículos se cargarán dinámicamente -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" rows="3"
+                                placeholder="Describe la carga y detalles del viaje..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="window.ViajesManager.guardarViaje()">
+                        <i class="fas fa-save me-1"></i> Guardar Viaje
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Ver Detalles del Viaje -->
+    <div class="modal fade" id="detallesViajeModal" tabindex="-1" aria-labelledby="detallesViajeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="detallesViajeModalLabel">
+                        <i class="fas fa-eye me-2"></i>Detalles del Viaje
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="detallesViajeContent">
+                    <!-- El contenido se cargará dinámicamente -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Viaje -->
+    <div class="modal fade" id="editarViajeModal" tabindex="-1" aria-labelledby="editarViajeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="editarViajeModalLabel">
+                        <i class="fas fa-edit me-2"></i>Editar Viaje
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editarViajeForm">
+                        <input type="hidden" id="editViajeId" name="viajeId">
+
+                        <!-- Estado del Viaje -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editEstado" class="form-label">Estado del Viaje *</label>
+                                <select class="form-select" id="editEstado" name="estado" required>
+                                    <option value="pendiente">🕐 Pendiente</option>
+                                    <option value="en_ruta">🚛 En Ruta</option>
+                                    <option value="completado">✅ Completado</option>
+                                    <option value="cancelado">❌ Cancelado</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editNumeroViaje" class="form-label">Número de Viaje</label>
+                                <input type="text" class="form-control" id="editNumeroViaje" name="numeroViaje"
+                                    readonly>
+                            </div>
+                        </div>
+
+                        <!-- Origen y Destino -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editOrigenEstado" class="form-label">Estado de Origen *</label>
+                                <select class="form-select" id="editOrigenEstado" name="origenEstado" required>
+                                    <option value="">Seleccionar estado...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editOrigenMunicipio" class="form-label">Municipio de Origen *</label>
+                                <input type="text" class="form-control" id="editOrigenMunicipio" name="origenMunicipio"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editDestinoEstado" class="form-label">Estado de Destino *</label>
+                                <select class="form-select" id="editDestinoEstado" name="destinoEstado" required>
+                                    <option value="">Seleccionar estado...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editDestinoMunicipio" class="form-label">Municipio de Destino *</label>
+                                <input type="text" class="form-control" id="editDestinoMunicipio"
+                                    name="destinoMunicipio" required>
+                            </div>
+                        </div>
+
+                        <!-- Transportista y Vehículo -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editTransportista" class="form-label">Transportista *</label>
+                                <select class="form-select" id="editTransportista" name="transportista" required>
+                                    <option value="">Seleccionar transportista...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editVehiculo" class="form-label">Vehículo *</label>
+                                <select class="form-select" id="editVehiculo" name="vehiculo" required>
+                                    <option value="">Seleccionar vehículo...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Fechas -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editFechaProgramada" class="form-label">Fecha Programada *</label>
+                                <input type="date" class="form-control" id="editFechaProgramada" name="fechaProgramada"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editHoraProgramada" class="form-label">Hora Programada</label>
+                                <input type="time" class="form-control" id="editHoraProgramada" name="horaProgramada">
+                            </div>
+                        </div>
+
+                        <!-- Observaciones -->
+                        <div class="mb-3">
+                            <label for="editObservaciones" class="form-label">Observaciones</label>
+                            <textarea class="form-control" id="editObservaciones" name="observaciones" rows="3"
+                                placeholder="Observaciones del viaje..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-warning" onclick="window.ViajesManager.actualizarViaje()">
+                        <i class="fas fa-save me-1"></i> Actualizar Viaje
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Dependencies - Async loading for better performance -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    
+    <!-- jsPDF and html2canvas for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    
+    <!-- Chart.js - Load only when needed -->
+    <script>
+        // Lazy load Chart.js only when dashboard is accessed
+        window.loadChartJS = function() {
+            return new Promise((resolve, reject) => {
+                if (window.Chart) {
+                    console.log('✅ Chart.js ya disponible');
+                    resolve(window.Chart);
+                    return;
+                }
+                
+                console.log('📦 Cargando Chart.js...');
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+                script.async = true;
+                
+                script.onload = () => {
+                    console.log('✅ Chart.js cargado exitosamente');
+                    resolve(window.Chart);
+                };
+                
+                script.onerror = () => {
+                    console.error('❌ Error cargando Chart.js');
+                    reject(new Error('Failed to load Chart.js'));
+                };
+                
+                document.head.appendChild(script);
+            });
+        };
+    </script>
+    
+    <!-- jsPDF - Load only when PDF generation is needed -->
+    <script>
+        // Lazy load jsPDF only when PDF generation is requested
+        window.loadJsPDF = function() {
+            return new Promise((resolve) => {
+                if (window.jsPDF) {
+                    resolve(window.jsPDF);
+                } else {
+                    const script = document.createElement('script');
+                    script.src = 'https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js';
+                    script.onload = () => resolve(window.jsPDF);
+                    document.head.appendChild(script);
+                }
+            });
+        };
+    </script>
+
+    <!-- Performance & Optimization Scripts - Load first -->
+    <script src="assets/js/cache-manager.js?v=2.0.0"></script>
+    <script src="assets/js/skeleton-helpers.js?v=2.0.0"></script>
+    <script src="assets/js/anti-flash.js?v=2.0.0"></script>
+    <script src="assets/js/lazy-loader.js?v=2.0.0" defer></script>
+    <script src="assets/js/performance-utils.js?v=2.0.0" defer></script>
+    
+    <!-- Main Application Scripts - Optimized loading -->
+    <script src="assets/js/main.js?v=2.0.0" defer></script>
+    
+    <!-- Module Scripts - Lazy loaded when needed -->
+    <script src="assets/js/gastos_new.js?v=2.0.0" defer></script>
+    <script src="assets/js/viajes_simple.js?v=2.0.0" defer></script>
+
+    <!-- Debugging Scripts (temporales) - REMOVIDOS -->
+
+    <!-- Initialize the application -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('✅ Aplicación cargada correctamente');
+            
+            // Forzar aplicación de restricciones de roles después de cargar
+            setTimeout(() => {
+                if (window.app && window.app.currentUser) {
+                    const role = window.app.currentUser.role || window.app.currentUser.rol || 'usuario';
+                    document.body.setAttribute('data-role', role.toLowerCase());
+                    console.log('🔒 Atributo data-role aplicado:', role.toLowerCase());
+                    
+                    // Si estamos en viajes y es transportista, forzar restricciones
+                    if (role.toLowerCase() === 'transportista') {
+                        const viajesSection = document.getElementById('viajesSection');
+                        if (viajesSection && viajesSection.classList.contains('active')) {
+                            setTimeout(() => {
+                                if (window.ViajesManager && window.ViajesManager.configurarRestricciones) {
+                                    window.ViajesManager.configurarRestricciones();
+                                    console.log('🔒 Restricciones de viajes aplicadas para transportista');
+                                }
+                            }, 300);
+                        }
+                    }
+                }
+            }, 500);
+        });
+    </script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

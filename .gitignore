@@ -1,0 +1,57 @@
+# Archivos de configuración local
+config.local.php
+.env
+.env.local
+
+# Archivos de desarrollo
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+error_log
+
+# Archivos temporales
+tmp/
+temp/
+*.tmp
+*.cache
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# Backups
+*.bak
+*.backup
+*.old
+*.orig
+
+# Node modules (si usas npm)
+node_modules/
+package-lock.json
+
+# Composer (si usas composer)
+vendor/
+composer.lock
+
+# Archivos subidos por usuarios (opcional - descomenta si no quieres subirlos)
+# uploads/recibos/*
+# !uploads/recibos/.htaccess
+
+# Carpeta de pruebas y otros
+Otros/
+
+# Cache
+api/cache/*
+!api/cache/.htaccess
+includes/cache/*
+
+# Archivos de Railway (se generan automáticamente)
+.railway/
