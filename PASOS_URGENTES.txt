@@ -1,0 +1,151 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║   🚨 PASOS URGENTES PARA SOLUCIONAR                          ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+📋 SITUACIÓN ACTUAL:
+═══════════════════════════════════════════════════════════════
+
+✅ Variables de entorno agregadas en Railway
+✅ Código actualizado en Git (local)
+❌ Railway NO tiene el código actualizado todavía
+
+
+🚀 SOLUCIÓN - HAZ ESTO AHORA:
+═══════════════════════════════════════════════════════════════
+
+PASO 1: Subir los nuevos archivos a Git
+───────────────────────────────────────────────────────────────
+
+git add version.php PASOS_URGENTES.txt
+git commit -m "Add: Archivo de verificación de versión"
+git push
+
+
+PASO 2: Forzar Redeploy en Railway
+───────────────────────────────────────────────────────────────
+
+Opción A - Desde la Web (MÁS FÁCIL):
+   1. Ve a: https://railway.app/dashboard
+   2. Click en tu proyecto
+   3. Click en "TransLogix" (tu servicio web)
+   4. Ve a la pestaña "Deployments"
+   5. Click en el último deployment
+   6. Click en "Redeploy" (botón arriba a la derecha)
+   7. Espera 2-3 minutos
+
+Opción B - Restart:
+   1. Ve a: https://railway.app/dashboard
+   2. Click en tu proyecto
+   3. Click en "TransLogix"
+   4. Ve a "Settings"
+   5. Scroll hasta "Danger Zone"
+   6. Click en "Restart"
+
+
+PASO 3: Verificar que el Deploy Funcionó
+───────────────────────────────────────────────────────────────
+
+Visita estas URLs en orden:
+
+1. https://tu-app.railway.app/version.php
+   
+   Deberías ver:
+   {
+     "version": "2.0.1",
+     "environment": "Railway",
+     "files_check": {
+       "app-config.js": "✅ Existe"
+     }
+   }
+
+2. https://tu-app.railway.app/debug-env.php
+   
+   Deberías ver:
+   - ✅ Entorno: Railway
+   - ✅ Conexión exitosa
+   - Lista de tablas
+
+3. https://tu-app.railway.app
+   
+   - Haz login
+   - El dashboard debería cargar datos
+
+
+🔍 SI VERSION.PHP MUESTRA "app-config.js": "❌ No existe"
+═══════════════════════════════════════════════════════════════
+
+Significa que Railway no tiene los archivos nuevos. Haz esto:
+
+1. Verifica que hiciste push:
+   git log --oneline -5
+   
+   Deberías ver: "Fix: Corregir rutas API para Railway"
+
+2. Verifica en GitHub/GitLab que los archivos existen:
+   - assets/js/app-config.js
+   - version.php
+
+3. En Railway, verifica que está conectado al repo correcto:
+   - Settings → Source → Debería mostrar tu repo
+
+
+🔍 SI LOS DATOS SIGUEN SIN CARGAR
+═══════════════════════════════════════════════════════════════
+
+1. Abre DevTools (F12) en el navegador
+2. Ve a la pestaña "Console"
+3. Busca mensajes como:
+   "🔧 URL corregida: /LogisticaFinal/api/... → /api/..."
+
+4. Si NO ves esos mensajes:
+   - app-config.js no se está cargando
+   - Verifica version.php
+
+5. Si ves errores 404:
+   - Copia el error completo
+   - Verifica que la base de datos esté importada
+
+
+🔍 SI LA BASE DE DATOS ESTÁ VACÍA
+═══════════════════════════════════════════════════════════════
+
+Importa tu SQL:
+
+Opción A - Railway CLI:
+   npm install -g @railway/cli
+   railway login
+   railway link
+   railway run php init-railway-db.php
+
+Opción B - MySQL Workbench:
+   1. En Railway, ve a MySQL → Connect
+   2. Copia las credenciales
+   3. Conéctate con MySQL Workbench
+   4. Importa tu archivo SQL
+
+
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║   📝 RESUMEN                                                  ║
+║                                                               ║
+║   1. git push (si no lo hiciste)                             ║
+║   2. Redeploy en Railway                                     ║
+║   3. Espera 2-3 minutos                                      ║
+║   4. Verifica version.php                                    ║
+║   5. Verifica debug-env.php                                  ║
+║   6. Haz login y prueba                                      ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+⏱️  Tiempo estimado: 5 minutos
+🎯 Resultado: Dashboard con datos funcionando
+
+
+═══════════════════════════════════════════════════════════════
+Si después de esto sigue sin funcionar, copia el error exacto
+de la consola del navegador (F12 → Console) y avísame.
+═══════════════════════════════════════════════════════════════
