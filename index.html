@@ -1591,11 +1591,17 @@
     <!-- Module Scripts - Lazy loaded when needed -->
     <script src="assets/js/gastos_new.js?v=2.0.0" defer></script>
     <script src="assets/js/viajes_simple.js?v=2.0.0" defer></script>
+    <script src="assets/js/vehiculos.js?v=2.0.1" defer></script>
+    <script src="assets/js/reportes.js?v=2.0.1" defer></script>
 
     <!-- Debugging Scripts (temporales) - REMOVIDOS -->
 
     <!-- Initialize the application -->
     <script>
+        // Inicializar la aplicación
+        window.app = new TransportePro();
+        console.log('🚀 Aplicación TransportePro inicializada');
+        
         document.addEventListener('DOMContentLoaded', function () {
             console.log('✅ Aplicación cargada correctamente');
             

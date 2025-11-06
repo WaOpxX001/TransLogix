@@ -861,10 +861,6 @@ VehiculosManager.confirmDeleteVehicle = async function(id) {
     }
 };
 
-// Initialize Vehiculos Manager
-window.VehiculosManager = new VehiculosManager();
-
-
 // Inicializar instancia global cuando se carga el script
 if (typeof window.VehiculosManager === 'undefined') {
     console.log('🚚 Inicializando VehiculosManager...');

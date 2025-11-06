@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Vehículos API</title>
+</head>
+<body>
+    <h1>Test de API de Vehículos</h1>
+    <button onclick="testList()">Test List</button>
+    <button onclick="testStats()">Test Stats</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function testList() {
+            try {
+                const response = await fetch('api/vehiculos/list.php');
+                const data = await response.json();
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+                console.log('List:', data);
+            } catch (error) {
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+                console.error(error);
+            }
+        }
+
+        async function testStats() {
+            try {
+                const response = await fetch('api/vehiculos/stats.php');
+                const data = await response.json();
+                document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+                console.log('Stats:', data);
+            } catch (error) {
+                document.getElementById('result').textContent = 'Error: ' + error.message;
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
