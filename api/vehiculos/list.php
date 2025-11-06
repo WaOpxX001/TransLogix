@@ -13,29 +13,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 try {
-    require_once '../../includes/cache.php';
-    
-    // Parámetros de paginación y cache
-    $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
-    $limit = isset($_GET['limit']) ? min(100, max(10, intval($_GET['limit']))) : 50;
-    $offset = ($page - 1) * $limit;
-    
-    // Cache key
-    $cacheKey = "vehiculos_list_page_{$page}_limit_{$limit}";
-    
-    // Verificar cache
-    $cachedData = $cache->get($cacheKey);
-    if ($cachedData !== null) {
-        echo json_encode($cachedData);
-        exit();
-    }
-    
     // Usar configuración de config.php (detecta Railway automáticamente)
     require_once __DIR__ . '/../../config.php';
     $db = new Database();
     $pdo = $db->getConnection();
     
-    session_start();
+    // Parámetros de paginación
+    $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+    $limit = isset($_GET['limit']) ? min(100, max(10, intval($_GET['limit']))) : 50;
+    $offset = ($page - 1) * $limit;
+    
+    // Cache deshabilitado temporalmente para evitar errores
+    // $cacheKey = "vehiculos_list_page_{$page}_limit_{$limit}";
+    // $cachedData = $cache->get($cacheKey);
+    // if ($cachedData !== null) {
+    //     echo json_encode($cachedData);
+    //     exit();
+    // }
     
     // Verificar que el usuario esté logueado
     if (!isset($_SESSION['user_id'])) {

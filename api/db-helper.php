@@ -11,26 +11,14 @@ if (!class_exists('Database')) {
 }
 
 // Función helper para obtener conexión PDO
-function getDBConnection() {
-    $db = new Database();
-    return $db->getConnection();
+if (!function_exists('getDBConnection')) {
+    function getDBConnection() {
+        $db = new Database();
+        return $db->getConnection();
+    }
 }
 
 // La sesión se inicia automáticamente en Database::__construct()
-// No necesitamos iniciarla aquí
-
-// Función helper para verificar autenticación
-function requireAuth() {
-    if (!isset($_SESSION['user_id'])) {
-        http_response_code(401);
-        echo json_encode(['error' => 'Not logged in']);
-        exit();
-    }
-    return $_SESSION['user_id'];
-}
-
-// Función helper para obtener rol del usuario
-function getUserRole() {
-    return $_SESSION['user_role'] ?? null;
-}
+// Las funciones requireAuth() y getUserRole() están definidas en config.php
+// No las redeclaramos aquí para evitar errores
 ?>

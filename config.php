@@ -160,6 +160,13 @@ function requireRole($allowedRoles) {
     return $user;
 }
 
+// Helper para obtener rol del usuario
+if (!function_exists('getUserRole')) {
+    function getUserRole() {
+        return $_SESSION['user_role'] ?? $_SESSION['rol'] ?? null;
+    }
+}
+
 // Response Helper
 if (!function_exists('sendResponse')) {
     function sendResponse($data, $status = 200) {
