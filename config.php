@@ -23,12 +23,7 @@ define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
 define('ALLOWED_EXTENSIONS', ['jpg', 'jpeg', 'png', 'gif', 'webp']);
 
 // Session Configuration
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_only_cookies', 1);
-ini_set('session.cookie_secure', 0); // Set to 1 in production with HTTPS
-
-// Start session
-session_start();
+// NO iniciar sesión aquí - se hará después de configurar el handler
 
 // CORS Headers for API
 header('Content-Type: application/json; charset=utf-8');
@@ -45,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // Database Connection Class
 class Database {
     private $connection;
+    private static $sessionInitialized = false;
     
     public function __construct() {
         try {
@@ -60,6 +56,14 @@ class Database {
                     PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
                 ]
             );
+            
+            // Inicializar sesiones en base de datos (solo una vez)
+            if (!self::$sessionInitialized && session_status() === PHP_SESSION_NONE) {
+                require_once __DIR__ . '/api/session-handler.php';
+                initDatabaseSessions($this->connection);
+                self::$sessionInitialized = true;
+            }
+            
         } catch (PDOException $e) {
             error_log("Database connection failed: " . $e->getMessage());
             error_log("DSN: mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME);

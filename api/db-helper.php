@@ -16,10 +16,8 @@ function getDBConnection() {
     return $db->getConnection();
 }
 
-// Iniciar sesión si no está iniciada
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
+// La sesión se inicia automáticamente en Database::__construct()
+// No necesitamos iniciarla aquí
 
 // Función helper para verificar autenticación
 function requireAuth() {
