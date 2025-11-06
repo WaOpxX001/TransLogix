@@ -1,9 +1,20 @@
 <?php
-// Database Configuration
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'transporte_pro');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// Database Configuration - Auto-detect Railway or Local
+if (getenv('RAILWAY_ENVIRONMENT') || getenv('MYSQLHOST')) {
+    // Railway Environment
+    define('DB_HOST', getenv('MYSQLHOST') ?: 'localhost');
+    define('DB_NAME', getenv('MYSQLDATABASE') ?: 'transporte_db');
+    define('DB_USER', getenv('MYSQLUSER') ?: 'root');
+    define('DB_PASS', getenv('MYSQLPASSWORD') ?: '');
+    define('DB_PORT', getenv('MYSQLPORT') ?: '3306');
+} else {
+    // Local Environment
+    define('DB_HOST', 'localhost');
+    define('DB_NAME', 'transporte_pro');
+    define('DB_USER', 'root');
+    define('DB_PASS', '');
+    define('DB_PORT', '3306');
+}
 
 // Security Configuration
 define('JWT_SECRET', 'your_jwt_secret_key_here_change_in_production');
@@ -37,20 +48,23 @@ class Database {
     
     public function __construct() {
         try {
+            $dsn = "mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";charset=utf8mb4";
             $this->connection = new PDO(
-                "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
+                $dsn,
                 DB_USER,
                 DB_PASS,
                 [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false
+                    PDO::ATTR_EMULATE_PREPARES => false,
+                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
                 ]
             );
         } catch (PDOException $e) {
             error_log("Database connection failed: " . $e->getMessage());
+            error_log("DSN: mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME);
             http_response_code(500);
-            echo json_encode(['error' => 'Database connection failed']);
+            echo json_encode(['error' => 'Database connection failed', 'details' => $e->getMessage()]);
             exit();
         }
     }

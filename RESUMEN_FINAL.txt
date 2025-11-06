@@ -37,6 +37,11 @@
    • MYSQLUSER
    • MYSQLPASSWORD
 
+📝 VARIABLE ADICIONAL A AGREGAR (recomendada):
+   • TZ=America/Mexico_City
+   
+   Ver VARIABLES_AGREGAR.txt para más opciones
+
 
 🚀 LO QUE TIENES QUE HACER AHORA:
 ═══════════════════════════════════════════════════════════════
