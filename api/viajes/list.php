@@ -11,15 +11,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once '../config.php';
 
 try {
-    // La sesión ya se inicia en config.php
+    // Obtener conexión a la base de datos
+    $db = new Database();
+    $pdo = $db->getConnection();
     
     // Verificar que el usuario esté logueado
-    // MODO DE PRUEBA: Si no hay sesión, permitir acceso (mostrar todos los viajes)
     $user_id = $_SESSION['user_id'] ?? null;
     $user_role = $_SESSION['user_role'] ?? $_SESSION['role'] ?? '';
     
-    // Si no hay sesión, asumir que es modo de prueba y no filtrar por usuario
-    $modo_prueba = ($user_id === null);
+    if (!$user_id) {
+        http_response_code(401);
+        echo json_encode(['error' => 'No autenticado']);
+        exit();
+    }
     
     // Construir la consulta según el rol del usuario
     $sql = "SELECT v.*, 
@@ -33,8 +37,8 @@ try {
     
     $params = [];
     
-    // Filtrar según el rol (solo si NO es modo de prueba)
-    if (!$modo_prueba && $user_role === 'transportista') {
+    // Filtrar según el rol
+    if ($user_role === 'transportista') {
         $sql .= " WHERE v.transportista_id = ?";
         $params[] = $user_id;
     }

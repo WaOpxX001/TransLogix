@@ -11,7 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once '../config.php';
 
 try {
-    session_start();
+    // Obtener conexión a la base de datos (la sesión ya se inicia en config.php)
+    $db = new Database();
+    $pdo = $db->getConnection();
     
     // Verificar que el usuario esté logueado
     if (!isset($_SESSION['user_id'])) {
