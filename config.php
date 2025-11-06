@@ -147,15 +147,19 @@ function requireRole($allowedRoles) {
 }
 
 // Response Helper
-function sendResponse($data, $status = 200) {
-    http_response_code($status);
-    echo json_encode($data);
-    exit();
+if (!function_exists('sendResponse')) {
+    function sendResponse($data, $status = 200) {
+        http_response_code($status);
+        echo json_encode($data);
+        exit();
+    }
 }
 
-function sendError($message, $status = 400) {
-    http_response_code($status);
-    echo json_encode(['error' => $message]);
-    exit();
+if (!function_exists('sendError')) {
+    function sendError($message, $status = 400) {
+        http_response_code($status);
+        echo json_encode(['error' => $message]);
+        exit();
+    }
 }
 ?>
