@@ -1212,7 +1212,7 @@ class RolesManager {
             console.log(`🔄 ${action} usuario ID:`, userId, 'nuevo estado:', newStatus);
             window.app.showToast(`${action.charAt(0).toUpperCase() + action.slice(1)}ando usuario...`, 'info');
             
-            const response = await window.app.apiCall('/LogisticaFinal/api/roles/update.php', {
+            const response = await window.app.apiCall('roles/update.php', {
                 method: 'POST',
                 body: JSON.stringify({
                     id: parseInt(userId),
@@ -1338,7 +1338,7 @@ class RolesManager {
             console.log('🗑️ Eliminando usuario ID:', userId);
             window.app.showToast('Eliminando usuario...', 'info');
             
-            const response = await window.app.apiCall('/LogisticaFinal/api/roles/delete.php', {
+            const response = await window.app.apiCall('roles/delete.php', {
                 method: 'POST',
                 body: JSON.stringify({ id: parseInt(userId) })
             });

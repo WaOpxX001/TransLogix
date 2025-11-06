@@ -98,7 +98,8 @@ class DashboardManager {
             console.log('📊 Cargando gastos individuales del usuario:', userId);
             
             // Cargar TODOS los gastos del usuario
-            const gastosResponse = await fetch('/LogisticaFinal/api/gastos/list.php');
+            const apiPath = window.APP_CONFIG ? window.APP_CONFIG.apiPath : 'api';
+            const gastosResponse = await fetch(`${apiPath}/gastos/list.php`);
             const allGastos = await gastosResponse.json();
             
             console.log('📊 Total gastos recibidos:', allGastos.length);
@@ -380,7 +381,8 @@ class DashboardManager {
             // Cargar datos de gastos y vehículos con cache busting
             console.log('🔄 Llamando a dashboard API...');
             const timestamp = Date.now();
-            const dashboardResponse = await fetch('/LogisticaFinal/api/dashboard/data_no_filter.php?v=' + timestamp, {
+            const apiPath = window.APP_CONFIG ? window.APP_CONFIG.apiPath : 'api';
+            const dashboardResponse = await fetch(`${apiPath}/dashboard/data_no_filter.php?v=${timestamp}`, {
                 cache: 'no-store',
                 headers: {
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -421,7 +423,8 @@ class DashboardManager {
             console.log('🚛 Cargando datos de viajes...');
             let viajesData = [];
             try {
-                const viajesResponse = await fetch('/LogisticaFinal/api/viajes/list.php');
+                const apiPath = window.APP_CONFIG ? window.APP_CONFIG.apiPath : 'api';
+                const viajesResponse = await fetch(`${apiPath}/viajes/list.php`);
                 console.log('🚛 Viajes response status:', viajesResponse.status);
                 
                 if (!viajesResponse.ok) {
@@ -467,7 +470,8 @@ class DashboardManager {
             console.log('📋 Cargando gastos recientes...');
             let recentGastos = [];
             try {
-                const gastosResponse = await fetch('/LogisticaFinal/api/gastos/list.php');
+                const apiPath = window.APP_CONFIG ? window.APP_CONFIG.apiPath : 'api';
+                const gastosResponse = await fetch(`${apiPath}/gastos/list.php`);
                 console.log('📋 Gastos response status:', gastosResponse.status);
                 
                 if (!gastosResponse.ok) {
@@ -2135,14 +2139,15 @@ class DashboardManager {
             this.isLoading = true;
             
             // Cargar datos del dashboard (usando API simplificada temporalmente)
-            const dashboardResponse = await fetch('/LogisticaFinal/api/dashboard/data_no_filter.php?v=' + Date.now());
+            const apiPath = window.APP_CONFIG ? window.APP_CONFIG.apiPath : 'api';
+            const dashboardResponse = await fetch(`${apiPath}/dashboard/data_no_filter.php?v=${Date.now()}`);
             if (!dashboardResponse.ok) {
                 throw new Error(`Dashboard API error: ${dashboardResponse.status}`);
             }
             const dashboardData = await dashboardResponse.json();
 
             // Cargar datos de viajes
-            const viajesResponse = await fetch('/LogisticaFinal/api/viajes/list.php');
+            const viajesResponse = await fetch(`${apiPath}/viajes/list.php`);
             let viajesArray = [];
             let viajesStats = { total_viajes: 0, viajes_pendientes: 0, viajes_en_progreso: 0, viajes_completados: 0 };
             
@@ -2160,7 +2165,7 @@ class DashboardManager {
             }
 
             // Cargar gastos recientes
-            const gastosResponse = await fetch('/LogisticaFinal/api/gastos/list.php');
+            const gastosResponse = await fetch(`${apiPath}/gastos/list.php`);
             let recentGastos = [];
             if (gastosResponse.ok) {
                 const gastosData = await gastosResponse.json();

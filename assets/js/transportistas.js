@@ -23,7 +23,7 @@ class TransportistasManager {
     async loadData() {
         try {
             // Real API call to get drivers from database
-            const response = await window.app.apiCall('/LogisticaFinal/api/transportistas/list.php');
+            const response = await window.app.apiCall('transportistas/list.php');
             this.drivers = response;
             this.updateDriversList();
             
@@ -497,7 +497,8 @@ class TransportistasManager {
             // Intentar envío alternativo como prueba
             console.log('🔄 Intentando método alternativo...');
             try {
-                const testResponse = await fetch('/LogisticaFinal/api/transportistas/create.php', {
+                const apiPath = window.APP_CONFIG ? window.APP_CONFIG.apiPath : 'api';
+                const testResponse = await fetch(`${apiPath}/transportistas/create.php`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -739,7 +740,7 @@ class TransportistasManager {
         try {
             window.app.showToast('Actualizando transportista...', 'info');
             
-            const response = await window.app.apiCall('/LogisticaFinal/api/transportistas/update.php', {
+            const response = await window.app.apiCall('transportistas/update.php', {
                 method: 'POST',
                 body: JSON.stringify(driverData)
             });
@@ -773,7 +774,7 @@ class TransportistasManager {
                     console.log('🗑️ Eliminando transportista ID:', id);
                     console.log('📋 Datos a enviar:', { id });
                     
-                    const response = await window.app.apiCall('/LogisticaFinal/api/transportistas/delete.php', {
+                    const response = await window.app.apiCall('transportistas/delete.php', {
                         method: 'POST',
                         body: JSON.stringify({ id: parseInt(id) })
                     });

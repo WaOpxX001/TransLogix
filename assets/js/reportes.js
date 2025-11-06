@@ -92,7 +92,7 @@ class ReportesManager {
     async loadTransportistas() {
         try {
             console.log('📊 Cargando transportistas...');
-            const response = await window.app.apiCall('/LogisticaFinal/api/transportistas/list.php');
+            const response = await window.app.apiCall('transportistas/list.php');
             console.log('📊 Respuesta de API:', response);
             
             let transportistas = [];
@@ -198,8 +198,9 @@ class ReportesManager {
         try {
             window.app.showToast('📊 Generando reporte...', 'info');
             
-            // Construir URL con parámetros
-            let url = `/LogisticaFinal/api/reportes/${reportType}.php?start=${startDate}&end=${endDate}`;
+            // Construir URL con parámetros usando la configuración correcta
+            const apiPath = window.APP_CONFIG ? window.APP_CONFIG.apiPath : 'api';
+            let url = `${apiPath}/reportes/${reportType}.php?start=${startDate}&end=${endDate}`;
             
             // Agregar filtro de transportista si no es "all"
             if (transportistaId && transportistaId !== 'all') {
