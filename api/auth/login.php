@@ -59,11 +59,20 @@ if (!$passwordValid) {
 $updateStmt = $conn->prepare("UPDATE usuarios SET ultimo_acceso = NOW() WHERE id = ?");
 $updateStmt->execute([$user['id']]);
 
-// Generate token
+// Generate token and set session
 $token = generateToken($user['id'], $user['rol']);
 $_SESSION['auth_token'] = $token;
 $_SESSION['user_id'] = $user['id'];
 $_SESSION['user_role'] = $user['rol'];
+$_SESSION['rol'] = $user['rol']; // Compatibilidad
+$_SESSION['user_nombre'] = $user['nombre'];
+$_SESSION['user_email'] = $user['email'];
+
+error_log("LOGIN SUCCESS - Session set: " . json_encode([
+    'user_id' => $_SESSION['user_id'],
+    'rol' => $_SESSION['rol'],
+    'session_id' => session_id()
+]));
 
 sendResponse([
     'success' => true,

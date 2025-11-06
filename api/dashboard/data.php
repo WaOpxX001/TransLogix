@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1); // Mostrar errores para debug
 ini_set('log_errors', 1);
 
-require_once '../config.php';
+require_once '../../config.php';
 require_once '../../includes/cache.php';
 
 // Get user from session for role-based filtering

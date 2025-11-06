@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 try {
-    require_once '../config.php';
+    require_once '../../config.php';
     
     // Get user from session (la sesión ya se inicia en config.php)
     if (!isset($_SESSION['user_id'])) {

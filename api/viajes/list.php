@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
 }
 
-require_once '../config.php';
+require_once '../../config.php';
 
 try {
     // Obtener conexión a la base de datos
