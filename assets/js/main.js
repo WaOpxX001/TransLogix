@@ -4,7 +4,9 @@ class TransportePro {
         this.currentUser = null;
         this.currentSection = 'dashboardSection';
         this.authToken = null;
-        this.apiBase = 'api';
+        // Usar configuración global si existe, sino usar 'api' por defecto
+        this.apiBase = window.APP_CONFIG ? window.APP_CONFIG.apiPath : 'api';
+        console.log('🔧 API Base configurado:', this.apiBase);
         this.init();
     }
 
