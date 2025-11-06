@@ -44,23 +44,37 @@ class Database {
     
     public function __construct() {
         try {
+            // Configurar opciones PDO
+            $options = [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
+            ];
+            
+            // NO usar socket Unix en Railway
+            if (!getenv('RAILWAY_ENVIRONMENT') && !getenv('MYSQLHOST')) {
+                // Solo en local sin variables de entorno
+                $options[PDO::MYSQL_ATTR_UNIX_SOCKET] = '/tmp/mysql.sock';
+            }
+            
             $dsn = "mysql:host=" . DB_HOST . ";port=" . DB_PORT . ";dbname=" . DB_NAME . ";charset=utf8mb4";
+            
+            error_log("Attempting connection - Host: " . DB_HOST . ", Port: " . DB_PORT . ", DB: " . DB_NAME);
+            
             $this->connection = new PDO(
                 $dsn,
                 DB_USER,
                 DB_PASS,
-                [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false,
-                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
-                ]
+                $options
             );
             
-            // Inicializar sesiones en base de datos (solo una vez)
+            // Inicializar sesiones (temporalmente usando archivos en lugar de DB)
             if (!self::$sessionInitialized && session_status() === PHP_SESSION_NONE) {
-                require_once __DIR__ . '/api/session-handler.php';
-                initDatabaseSessions($this->connection);
+                // Comentado temporalmente para simplificar debugging
+                // require_once __DIR__ . '/api/session-handler.php';
+                // initDatabaseSessions($this->connection);
+                session_start();
                 self::$sessionInitialized = true;
             }
             
