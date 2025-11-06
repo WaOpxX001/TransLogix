@@ -4,13 +4,9 @@ header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 
 try {
-    // Conexión simple a la base de datos
-    $pdo = new PDO(
-        "mysql:host=localhost;dbname=transporte_pro;charset=utf8mb4",
-        "root",
-        "",
-        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-    );
+    // Usar db-helper (detecta Railway automáticamente)
+    require_once __DIR__ . '/../db-helper.php';
+    $pdo = getDBConnection();
     
     $start_date = $_GET['start_date'] ?? '';
     $end_date = $_GET['end_date'] ?? '';
@@ -84,3 +80,4 @@ try {
     ]);
 }
 ?>
+

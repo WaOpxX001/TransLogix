@@ -14,16 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 // Create database connection directly to avoid config.php headers
 try {
-    $pdo = new PDO(
-        "mysql:host=localhost;dbname=transportepro_db;charset=utf8mb4",
-        "root",
-        "",
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false
-        ]
-    );
+    // Usar db-helper (detecta Railway automáticamente)
+    require_once __DIR__ . '/../db-helper.php';
+    $pdo = getDBConnection();
 } catch (PDOException $e) {
     echo json_encode([
         'success' => false,

@@ -45,17 +45,9 @@ if ($id <= 0) {
 }
 
 try {
-    // Create database connection directly with correct database name
-    $pdo = new PDO(
-        "mysql:host=localhost;dbname=transporte_pro;charset=utf8mb4",
-        "root",
-        "",
-        [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            PDO::ATTR_EMULATE_PREPARES => false
-        ]
-    );
+    // Usar db-helper (detecta Railway automáticamente)
+    require_once __DIR__ . '/../db-helper.php';
+    $pdo = getDBConnection();
 
     // Check if user exists first
     $checkStmt = $pdo->prepare("SELECT id, activo, nombre FROM usuarios WHERE id = ?");
