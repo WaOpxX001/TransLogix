@@ -81,8 +81,7 @@ class GastosManager {
             
             // FORZAR recarga desde el servidor sin caché
             const timestamp = Date.now();
-            const apiPath = window.APP_CONFIG ? window.APP_CONFIG.apiPath : 'api';
-            const response = await fetch(`${apiPath}/vehiculos/list.php?v=${timestamp}`, {
+            const response = await fetch(window.getApiUrl('vehiculos/list.php?v=' + timestamp), {
                 method: 'GET',
                 cache: 'no-store',
                 headers: {
@@ -123,8 +122,7 @@ class GastosManager {
             
             // FORZAR recarga desde el servidor sin caché
             const timestamp = Date.now();
-            const apiPath = window.APP_CONFIG ? window.APP_CONFIG.apiPath : 'api';
-            const response = await fetch(`${apiPath}/viajes/list.php?v=${timestamp}`, {
+            const response = await fetch(window.getApiUrl('viajes/list.php?v=' + timestamp), {
                 method: 'GET',
                 cache: 'no-store',
                 headers: {
@@ -519,8 +517,7 @@ class GastosManager {
             }
 
             // Usar fetch directamente para subir archivos (no usar apiCall que puede modificar headers)
-            const apiPath = window.APP_CONFIG ? window.APP_CONFIG.apiPath : 'api';
-            const response = await fetch(`${apiPath}/gastos/upload.php`, {
+            const response = await fetch(window.getApiUrl('gastos/upload.php'), {
                 method: 'POST',
                 body: formData,
                 credentials: 'include' // Incluir cookies de sesión

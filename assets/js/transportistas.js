@@ -497,8 +497,7 @@ class TransportistasManager {
             // Intentar envío alternativo como prueba
             console.log('🔄 Intentando método alternativo...');
             try {
-                const apiPath = window.APP_CONFIG ? window.APP_CONFIG.apiPath : 'api';
-                const testResponse = await fetch(`${apiPath}/transportistas/create.php`, {
+                const testResponse = await fetch(window.getApiUrl('transportistas/create.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1933,7 +1932,7 @@ TransportistasManager.confirmDeleteDriver = async function(id) {
         console.log('📋 Datos a enviar:', requestData);
         
         // El endpoint delete.php ahora hace eliminación permanente de la base de datos
-        const response = await window.app.apiCall('/LogisticaFinal/api/transportistas/delete.php', {
+        const response = await window.app.apiCall('transportistas/delete.php', {
             method: 'POST',
             body: JSON.stringify(requestData)
         });
