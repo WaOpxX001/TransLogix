@@ -1585,8 +1585,8 @@
     <!-- App Configuration - MUST load before main.js -->
     <script src="assets/js/app-config.js?v=2.0.0"></script>
     
-    <!-- Main Application Scripts - Optimized loading -->
-    <script src="assets/js/main.js?v=2.0.0" defer></script>
+    <!-- Main Application Scripts - MUST load synchronously before initialization -->
+    <script src="assets/js/main.js?v=2.0.0"></script>
     
     <!-- Module Scripts - Lazy loaded when needed -->
     <script src="assets/js/gastos_new.js?v=2.0.0" defer></script>
@@ -1598,7 +1598,7 @@
 
     <!-- Initialize the application -->
     <script>
-        // Inicializar la aplicación
+        // Inicializar la aplicación DESPUÉS de que main.js se haya cargado
         window.app = new TransportePro();
         console.log('🚀 Aplicación TransportePro inicializada');
         
